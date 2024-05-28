@@ -98,6 +98,16 @@ $link_nextMonth = "/money/" . $nextMonth . "/index";
                                 echo "<td class='midashiTd' style='text-align : center;'>メルカリ</td>";
                                 break;
 
+
+
+                                case "pay_f":
+                                    echo "<td class='midashiTd' style='text-align : center;'>楽天キャッシュ</td>";
+                                    break;
+    
+    
+
+
+
                             default:
                                 echo "<td class='midashiTd' style='text-align : center;'>" . $col . "</td>";
                                 break;

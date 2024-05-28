@@ -637,7 +637,7 @@ class MoneyController extends Controller
             ->get([
                 'year', 'month', 'day',
                 'bank_a', 'bank_b', 'bank_c', 'bank_d', 'bank_e',
-                'pay_a', 'pay_b', 'pay_c', 'pay_d', 'pay_e'
+                'pay_a', 'pay_b', 'pay_c', 'pay_d', 'pay_e', 'pay_f'
             ]);
 
         $data = [];
@@ -651,6 +651,7 @@ class MoneyController extends Controller
             $payC = [];
             $payD = [];
             $payE = [];
+            $payF = [];
 
             foreach ($result as $v) {
                 $bankA[$v->bank_a][] = $v->year . "-" . $v->month . "-" . $v->day;
@@ -664,9 +665,10 @@ class MoneyController extends Controller
                 $payC[$v->pay_c][] = $v->year . "-" . $v->month . "-" . $v->day;
                 $payD[$v->pay_d][] = $v->year . "-" . $v->month . "-" . $v->day;
                 $payE[$v->pay_e][] = $v->year . "-" . $v->month . "-" . $v->day;
+                $payF[$v->pay_f][] = $v->year . "-" . $v->month . "-" . $v->day;
             }
 
-            $bankAry = ['bankA', 'bankB', 'bankC', 'bankD', 'bankE', 'payA', 'payB', 'payC', 'payD', 'payE'];
+            $bankAry = ['bankA', 'bankB', 'bankC', 'bankD', 'bankE', 'payA', 'payB', 'payC', 'payD', 'payE', 'payF'];
 
             foreach ($bankAry as $v) {
                 $i = 0;
@@ -1932,7 +1934,7 @@ GOLD
             'yen_10000', 'yen_5000', 'yen_2000', 'yen_1000',
             'yen_500', 'yen_100', 'yen_50', 'yen_10', 'yen_5', 'yen_1',
             'bank_a', 'bank_b', 'bank_c', 'bank_d', 'bank_e',
-            'pay_a', 'pay_b', 'pay_c', 'pay_d', 'pay_e'
+            'pay_a', 'pay_b', 'pay_c', 'pay_d', 'pay_e', 'pay_f'
         ];
 
         $hand = [];
@@ -2465,7 +2467,7 @@ GOLD
                 ->where('day', '=', $y_day)
                 ->get();
 
-            foreach (['bank_a', 'bank_b', 'bank_c', 'bank_d', 'bank_e', 'pay_a', 'pay_b', 'pay_c', 'pay_d', 'pay_e'] as $copy) {
+            foreach (['bank_a', 'bank_b', 'bank_c', 'bank_d', 'bank_e', 'pay_a', 'pay_b', 'pay_c', 'pay_d', 'pay_e', 'pay_f'] as $copy) {
                 $insert[$copy] = $oneBefore[0]->$copy;
             }
 
@@ -2548,7 +2550,7 @@ GOLD
             ->orderBy('id')
             ->get(['year', 'month', 'day',
                 'bank_a', 'bank_b', 'bank_c', 'bank_d', 'bank_e',
-                'pay_a', 'pay_b', 'pay_c', 'pay_d', 'pay_e']);
+                'pay_a', 'pay_b', 'pay_c', 'pay_d', 'pay_e', 'pay_f']);
 
         $bkYen = 0;
         foreach ($result2 as $k => $v) {

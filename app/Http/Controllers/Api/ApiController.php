@@ -760,7 +760,8 @@ class ApiController extends Controller
                 'pay_b' => $request->pay_b,
                 'pay_c' => $request->pay_c,
                 'pay_d' => $request->pay_d,
-                'pay_e' => $request->pay_e
+                'pay_e' => $request->pay_e,
+                'pay_f' => $request->pay_f
             ];
 
             $result = DB::table('t_money')
@@ -829,6 +830,7 @@ class ApiController extends Controller
             $ary['pay_c'] = $result[0]->pay_c;
             $ary['pay_d'] = $result[0]->pay_d;
             $ary['pay_e'] = $result[0]->pay_e;
+            $ary['pay_f'] = $result[0]->pay_f;
 
             $response = implode("|", $ary);
         } else {
@@ -1040,6 +1042,15 @@ GOLD
                     $ex_val = explode("\t", $val);
 
                     $date = strtr(trim($ex_val[0]), ['/' => '-']);
+
+
+if(count($ex_val) < 4){continue;}
+
+if(is_null($ex_val[4])){continue;}
+
+
+
+
                     $price = strtr(trim($ex_val[4]), [',' => '', '円' => '']);
 
                     if (trim($price) == "") {
@@ -1069,6 +1080,14 @@ GOLD
                     $val = trim(strip_tags($v));
                     if (preg_match("/円.+円/", trim($val))) {
                         $ex_val = explode("\t", $val);
+
+
+
+
+                        if(count($ex_val) < 2){continue;}
+
+
+
                         $date = strtr(trim($ex_val[1]), ['/' => '-']);
                         $price = strtr(trim($ex_val[6]), [',' => '', '円' => '']);
 
@@ -5554,7 +5573,8 @@ t_tarotdraw.year, t_tarotdraw.month, t_tarotdraw.day;
                 $v->pay_b,
                 $v->pay_c,
                 $v->pay_d,
-                $v->pay_e
+                $v->pay_e,
+                $v->pay_f
             ];
         }
 
@@ -6206,6 +6226,9 @@ t_tarotdraw.year, t_tarotdraw.month, t_tarotdraw.day;
                 case "pay_e":
                     $check_price = $v->pay_e;
                     break;
+                    case "pay_f":
+                        $check_price = $v->pay_f;
+                        break;
             }
 
             if ($last_price != $check_price) {

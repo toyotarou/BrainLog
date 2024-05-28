@@ -779,7 +779,8 @@ class ApiControllerSecond extends Controller
                 "pay_b" => $v->pay_b,
                 "pay_c" => $v->pay_c,
                 "pay_d" => $v->pay_d,
-                "pay_e" => $v->pay_e
+                "pay_e" => $v->pay_e,
+                "pay_f" => $v->pay_f
             ];
         }
 
@@ -1412,6 +1413,7 @@ class ApiControllerSecond extends Controller
             $ary['pay_c'] = $result[0]->pay_c;
             $ary['pay_d'] = $result[0]->pay_d;
             $ary['pay_e'] = $result[0]->pay_e;
+            $ary['pay_f'] = $result[0]->pay_f;
 
         }
 
@@ -1895,6 +1897,7 @@ class ApiControllerSecond extends Controller
                 "pay_c" => $v->pay_c,
                 "pay_d" => $v->pay_d,
                 "pay_e" => $v->pay_e,
+                "pay_f" => $v->pay_f,
             ];
         }
 
