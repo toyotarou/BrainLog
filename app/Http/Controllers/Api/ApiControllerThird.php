@@ -184,7 +184,6 @@ class ApiControllerThird extends Controller
         $response = $ary;
 
         return response()->json(['data' => $response]);
-
     }
 
 
@@ -213,9 +212,31 @@ class ApiControllerThird extends Controller
         $response = $ary;
 
         return response()->json(['data' => $response]);
-
     }
 
+    /**
+     * 
+     */
+    public function getAllLifetimeRecord()
+    {
+
+        $response = [];
+
+        $result = DB::table('t_lifetime')
+            ->orderBy('year')
+            ->orderBy('month')
+            ->orderBy('day')
+            ->get();
+
+        $ary = [];
+        foreach ($result as $v) {
+            $ary[] = $v;
+        }
+
+        $response = $ary;
+
+        return response()->json(['data' => $response]);
+    }
 
     /**
      * @param Request $request
@@ -417,5 +438,40 @@ class ApiControllerThird extends Controller
         return response()->json(['data' => $response]);
     }
 
+    /**
+     * 
+     */
+    public function insertWalkRecord(Request $request)
+    {
 
+        try {
+            DB::beginTransaction();
+
+            list($year, $month, $day) = explode("-", $request->date);
+
+            DB::table('t_walk_record')
+                ->where('year', '=', $year)
+                ->where('month', '=', $month*1)
+                ->where('day', '=', $day*1)
+                ->delete();
+
+            $insert = [
+                "year" => $year,
+                "month" => $month*1,
+                "day" => $day*1,
+                "step"=>$request->step,
+                "distance"=>$request->distance,
+            ];
+
+            DB::table("t_walk_record")->insert($insert);
+
+            DB::commit();
+
+            $response = $request->all();
+            return response()->json(['data' => $response]);
+        } catch (Exception $e) {
+            DB::rollBack();
+            abort(500, $e->getMessage());
+        }
+    }
 }

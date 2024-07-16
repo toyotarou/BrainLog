@@ -15,9 +15,9 @@ class TempleNearStationGet extends Command
 
     public function handle()
     {
-
+        
         ////////////////////////////
-        $sql = "select * from t_station where substring(lat, 1, 2) in (34, 35, 36) and substring(lng, 1, 3) in (138, 139, 140)";
+        $sql = "select * from t_station";
         $result = DB::select($sql);
         $station = [];
         foreach ($result as $v) {
@@ -35,9 +35,51 @@ class TempleNearStationGet extends Command
         $result = DB::table('t_temple_list')->orderBy('id')->get();
 
         foreach ($result as $v) {
-//            if ($v->id > 1) {
-//                break;
-//            }
+            $ids = [];
+            $names = [];
+            foreach($station as $v2){
+                $dist = $this->getDistance(
+                    $v->lat,
+                    $v->lng,
+                    $v2['lat'],
+                    $v2['lng']
+                );
+
+                if ($dist[0] * 1000 <= 1000) {
+                    if (!in_array($v2['station_name'], $names)) {
+                         $ids[] = "{$v2['train_number']}-{$v2['id']}";
+                    }
+                }
+
+                $names[] = $v2['station_name'];
+            }
+
+            $update = [
+                'near_station' => implode(", ", $ids),
+            ];
+
+            print_r($v);
+            print_r($ids);
+            echo "\n\n";
+            echo "\n\n";
+
+            DB::table('t_temple_list')->where('id', $v->id)->update($update);
+        }
+
+
+
+/*
+
+
+
+
+
+
+
+
+        $result = DB::table('t_temple_list')->orderBy('id')->get();
+
+        foreach ($result as $v) {
 
             $ary = [];
             $kilo = [];
@@ -49,7 +91,7 @@ class TempleNearStationGet extends Command
                     $v2['lng']
                 );
 
-                if ($dist[0] * 1000 <= 10000) {
+                if ($dist[0] * 1000 <= 2000) {
                     $kilo[] = $dist[0] * 1000;
                     $ary[$dist[0] * 1000][] = $v2;
                 }
@@ -81,12 +123,13 @@ class TempleNearStationGet extends Command
                 $name[] = $v2['station_name'];
             }
 
-            $ary4 = array_slice($ary3, 0, 3);
+            // $ary4 = array_slice($ary3, 0, 3);
 
             $ids = [];
-            foreach ($ary4 as $v2) {
+            foreach ($ary3 as $v2) {
                 $ids[] = $v2['id'];
             }
+
             $update = [
                 'near_station' => implode(", ", $ids),
             ];
@@ -95,11 +138,17 @@ class TempleNearStationGet extends Command
 
             print_r($v);
             print_r($ids);
-            print_r($ary4);
+            print_r($ary3);
             echo "\n\n";
             echo "\n\n";
-
         }
+
+
+
+
+*/
+
+
     }
 
     private function getDistance($originLat, $originLng, $destLat, $destLng)

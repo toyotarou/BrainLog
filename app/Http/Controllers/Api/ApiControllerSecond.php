@@ -403,7 +403,10 @@ class ApiControllerSecond extends Controller
             ];
         }
 
-        return $ary;
+return $ary;
+
+
+
 
 //        $response = $ary;
 //
@@ -4436,6 +4439,11 @@ GOLD
 
     }
 
+    ///
+    public function getTempleListTemple(){
+        $result = DB::table('t_temple_list')->get();
+        return response()->json(['data' => $result]);
+    }
 
     /**
      * @return void

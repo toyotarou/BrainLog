@@ -143,6 +143,7 @@ Route::namespace('Api')->group(function () {
     Route::post('insertLifetime', 'ApiControllerThird@insertLifetime');
     Route::post('getLifetimeDateRecord', 'ApiControllerThird@getLifetimeDateRecord');
     Route::post('getLifetimeYearlyRecord', 'ApiControllerThird@getLifetimeYearlyRecord');
+    Route::post('getAllLifetimeRecord', 'ApiControllerThird@getAllLifetimeRecord');
 
 
     //money // riverpod
@@ -209,11 +210,13 @@ Route::namespace('Api')->group(function () {
     Route::post('nearStation', 'ApiControllerSecond@nearStation');
     Route::post('notReachedTempleStation', 'ApiControllerSecond@notReachedTempleStation');
     Route::post('getTempleDatePhoto', 'ApiControllerSecond@getTempleDatePhoto');
+    Route::post('getTempleListTemple', 'ApiControllerSecond@getTempleListTemple');
 
     //walk
     Route::post('getWalkRecord', 'ApiController@getWalkRecord');
     Route::match(['get', 'post'], "getWalkRecord2", "ApiController@getWalkRecord2");
     Route::match(['get', 'post'], "getWalkRecord3", "ApiControllerThird@getWalkRecord3");
+    Route::post('insertWalkRecord', 'ApiControllerThird@insertWalkRecord');
 
     //agent
     Route::post('getAgentName', 'ApiController@getAgentName');
