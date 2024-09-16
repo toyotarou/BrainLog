@@ -5333,6 +5333,9 @@ t_tarotdraw.year, t_tarotdraw.month, t_tarotdraw.day;
 
             $ary[$k]['drawNum_j'] = $ary6[$v->id][0];
             $ary[$k]['drawNum_r'] = $ary6[$v->id][1];
+
+            $ary[$k]["feel_j"] = $v->feeling_just;
+            $ary[$k]["feel_r"] = $v->feeling_reverse;            
         }
 
         $response = $ary;
@@ -6417,7 +6420,13 @@ t_tarotdraw.year, t_tarotdraw.month, t_tarotdraw.day;
                     continue;
                 }
 
+
                 $ex_val = explode("\t", $val);
+
+                if(count($ex_val)<4){
+                    continue;
+                }
+
                 $date = strtr(trim($ex_val[0]), ['/' => '-']);
                 $price = strtr(trim($ex_val[4]), [',' => '', '円' => '']);
 
@@ -6443,6 +6452,16 @@ t_tarotdraw.year, t_tarotdraw.month, t_tarotdraw.day;
                 $val = trim(strip_tags($v));
                 if (preg_match("/円.+円/", trim($val))) {
                     $ex_val = explode("\t", $val);
+
+
+
+
+                    if(count($ex_val)<2){
+                        continue;
+                    }
+
+
+
                     $date = strtr(trim($ex_val[1]), ['/' => '-']);
                     $price = strtr(trim($ex_val[6]), [',' => '', '円' => '']);
 
