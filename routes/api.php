@@ -236,6 +236,8 @@ Route::namespace('Api')->group(function () {
     Route::post('getBlankBunruiVideo', 'ApiControllerSecond@getBlankBunruiVideo');
     Route::post('oneBunruiInput', 'ApiControllerSecond@oneBunruiInput');
 
+    Route::post('searchYoutubeId', 'ApiControllerSecond@searchYoutubeId');
+
     //kigo
     Route::post('getKigoSeasonList', 'ApiControllerSecond@getKigoSeasonList');
     Route::post('getKigoSeasonRandomList', 'ApiControllerSecond@getKigoSeasonRandomList');

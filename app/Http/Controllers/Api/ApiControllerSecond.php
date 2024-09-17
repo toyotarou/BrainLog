@@ -2930,6 +2930,26 @@ GOLD
         }
     }
 
+    /**
+     * 
+     */
+    public function searchYoutubeId(Request $request)
+    {
+        $result = DB::table('t_youtube_data')
+        ->where('del', 0)
+        ->get();
+
+        $ary = [];
+        foreach($result as $v){
+            if(preg_match('/' . strtolower($request->word) . '/', strtolower($v->title))){
+                $ary[] = $v->id;
+            }
+        }
+
+        $response = $ary;
+
+        return response()->json(['data' => $response]);
+    }
 
     /**
      * @param Request $request
