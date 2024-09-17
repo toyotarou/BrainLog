@@ -2942,7 +2942,7 @@ GOLD
         $ary = [];
         foreach($result as $v){
             if(preg_match('/' . strtolower($request->word) . '/', strtolower($v->title))){
-                $ary[] = $v->id;
+                $ary[] = $v->youtube_id;
             }
         }
 
