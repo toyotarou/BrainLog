@@ -2941,8 +2941,17 @@ GOLD
 
         $ary = [];
         foreach($result as $v){
-            if(preg_match('/' . strtolower($request->word) . '/', strtolower($v->title))){
-                $ary[] = $v->youtube_id;
+            switch($request->target){
+            case 'title':
+                if(preg_match('/' . strtolower($request->word) . '/', strtolower($v->title))){
+                    $ary[] = $v->youtube_id;
+                }
+                break;
+            case 'channel':
+                if(preg_match('/' . strtolower($request->word) . '/', strtolower($v->channel_title))){
+                    $ary[] = $v->youtube_id;
+                }
+                break;
             }
         }
 
@@ -3941,86 +3950,29 @@ GOLD
      */
     public function getTokyoTrainStation(Request $request)
     {
-        $response = [];
 
-        $ch = curl_init();
+        $result = DB::table('t_train')->where('tokyo_train', 1)->get();
 
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $ary = [];
+        $keep_train_number = '';
 
-        curl_setopt($ch, CURLOPT_URL,
-            "https://geoapi.heartrails.com/api/json?method=getCities&prefecture=%E6%9D%B1%E4%BA%AC%E9%83%BD"
-        );
+        foreach($result as $v){
 
-        $result = curl_exec($ch);
-
-        $jsonStr = json_decode($result);
-
-        $city = [];
-        foreach ($jsonStr->response->location as $v) {
-            $city[] = $v->city;
-        }
-//        print_r($city);
-
-        $_train = [];
-        foreach ($city as $v) {
-            $result = DB::table('t_station')
-                ->where('address', 'like', "%東京都{$v}%")
-                ->get();
-
-            foreach ($result as $v2) {
-
-                if (strlen($v2->train_number) == 4) {
-                    continue;
-                }
-
-                $_train[$v2->train_number] = "";
-            }
-        }
-
-        $train = array_keys($_train);
-        sort($train);
-
-        $train99 = [];
-        foreach ($train as $v) {
-            $result99 = DB::table('t_station')
-                ->where('train_number', $v)
-                ->orderBy('id')
-                ->first();
-
-            $result98 = DB::table('t_station')
-                ->where('train_number', $v)
-                ->orderBy('id', 'desc')
-                ->first();
-
-            $getDist = $this->getDistance(
-                $result99->lat,
-                $result99->lng,
-                $result98->lat,
-                $result98->lng
-            );
-
-            if ($getDist[0] > 80) {
+            if (strlen($v->train_number) == 4) {
                 continue;
             }
 
-            $train99[] = $v;
-        }
+            $result99 = DB::table('t_station')->where('train_number', $v->train_number)->orderBy('id')->first();
+            $result98 = DB::table('t_station')->where('train_number', $v->train_number)->orderBy('id', 'desc')->first();
+            $getDist = $this->getDistance($result99->lat, $result99->lng, $result98->lat, $result98->lng);
+            if ($getDist[0] > 80) {continue;}
 
-        $ary = [];
-        foreach ($train99 as $v) {
-            $result = DB::table('t_train')
-                ->where('train_number', $v)
-                ->first();
-
-            $result2 = DB::table('t_station')
-                ->where('train_number', $v)
-                ->get();
+            $result2 = DB::table('t_station')->where('train_number', $v->train_number)->orderBy('id')->get();
 
             $station = [];
-            foreach ($result2 as $v2) {
+            foreach($result2 as $v2){
                 $station[] = [
-                    "id" => "{$v2->train_number}-{$v2->id}",
+                    "id" => "{$v->train_number}-{$v2->id}",
                     "station_name" => $v2->station_name,
                     "address" => $v2->address,
                     "lat" => $v2->lat,
@@ -4028,11 +3980,15 @@ GOLD
                 ];
             }
 
-            $ary[] = [
-                "train_number" => $v,
-                "train_name" => $result->train_name,
-                "station" => $station
-            ];
+            if (count($station)>0){
+                $ary[] = [
+                    "train_number" => $v->train_number,
+                    "train_name" => $v->train_name,
+                    "station" => $station
+                ];
+            }
+
+            $keep_train_number = $v->train_number;
         }
 
         $response = $ary;
