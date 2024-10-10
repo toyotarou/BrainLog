@@ -3943,6 +3943,20 @@ GOLD
         return response()->json(['data' => $response]);
     }
 
+    /**
+     * 
+     */
+    private function _getJsonStr(String $url)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        $result = curl_exec($ch);
+        $jsonStr = json_decode($result);
+
+        return $jsonStr;
+    }
 
     /**
      * @param Request $request
@@ -3950,50 +3964,39 @@ GOLD
      */
     public function getTokyoTrainStation(Request $request)
     {
-
-        $result = DB::table('t_train')->where('tokyo_train', 1)->get();
+        
+        //===============================// tokyoTrain
+        $url = 'https://express.heartrails.com/api/json?method=getLines&prefecture=%E6%9D%B1%E4%BA%AC%E9%83%BD';
+        $jsonStr = $this->_getJsonStr($url);
+        $tokyoTrain = $jsonStr->response->line;
+        //===============================// tokyoTrain
 
         $ary = [];
-        $keep_train_number = '';
+        foreach($tokyoTrain as $k=>$v){
+            $url2 = "https://express.heartrails.com/api/json?method=getStations&line={$v}";
+            $jsonStr2 = $this->_getJsonStr($url2);
 
-        foreach($result as $v){
-
-            if (strlen($v->train_number) == 4) {
-                continue;
-            }
-
-            $result99 = DB::table('t_station')->where('train_number', $v->train_number)->orderBy('id')->first();
-            $result98 = DB::table('t_station')->where('train_number', $v->train_number)->orderBy('id', 'desc')->first();
-            $getDist = $this->getDistance($result99->lat, $result99->lng, $result98->lat, $result98->lng);
-            if ($getDist[0] > 80) {continue;}
-
-            $result2 = DB::table('t_station')->where('train_number', $v->train_number)->orderBy('id')->get();
-
-            $station = [];
-            foreach($result2 as $v2){
-                $station[] = [
-                    "id" => "{$v->train_number}-{$v2->id}",
-                    "station_name" => $v2->station_name,
-                    "address" => $v2->address,
-                    "lat" => $v2->lat,
-                    "lng" => $v2->lng
+            $ary2 = [];
+            foreach($jsonStr2->response->station as $v2){
+                $ary2[] = [
+                    "id" => "{$k}-{$v2->postal}",
+                    "station_name" => $v2->name,
+                    "address" => '',
+                    "lat" => $v2->y,
+                    "lng" => $v2->x
                 ];
             }
 
-            if (count($station)>0){
-                $ary[] = [
-                    "train_number" => $v->train_number,
-                    "train_name" => $v->train_name,
-                    "station" => $station
-                ];
-            }
-
-            $keep_train_number = $v->train_number;
+            $ary[] = [
+                "train_number" => $k,
+                "train_name" => $v,
+                "station" => $ary2
+            ];
         }
 
         $response = $ary;
-
         return response()->json(['data' => $response]);
+
     }
 
 
