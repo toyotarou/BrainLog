@@ -211,6 +211,7 @@ Route::namespace('Api')->group(function () {
     Route::post('notReachedTempleStation', 'ApiControllerSecond@notReachedTempleStation');
     Route::post('getTempleDatePhoto', 'ApiControllerSecond@getTempleDatePhoto');
     Route::post('getTempleListTemple', 'ApiControllerSecond@getTempleListTemple');
+    Route::post('getTempleNotReachTrain', 'ApiControllerSecond@getTempleNotReachTrain');
 
     //walk
     Route::post('getWalkRecord', 'ApiController@getWalkRecord');

@@ -3959,6 +3959,21 @@ GOLD
     }
 
     /**
+     * 
+     */
+    private function _postJsonStr(String $url)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        $result = curl_exec($ch);
+        $jsonStr = json_decode($result);
+
+        return $jsonStr;
+    }
+
+    /**
      * @param Request $request
      * @return void
      */
@@ -3976,15 +3991,29 @@ GOLD
             $url2 = "https://express.heartrails.com/api/json?method=getStations&line={$v}";
             $jsonStr2 = $this->_getJsonStr($url2);
 
+            $keep_postal = [];
+
             $ary2 = [];
             foreach($jsonStr2->response->station as $v2){
+
+                $station_id = "{$k}-{$v2->postal}_1";
+
+                if(!empty($keep_postal[$v2->postal])){
+                    if(count($keep_postal[$v2->postal]) >= 1){
+                        $cnt = count($keep_postal[$v2->postal]) + 1;
+                        $station_id = "{$k}-{$v2->postal}_{$cnt}";
+                    }
+                }
+
                 $ary2[] = [
-                    "id" => "{$k}-{$v2->postal}",
+                    "id" => $station_id,
                     "station_name" => $v2->name,
                     "address" => '',
                     "lat" => $v2->y,
                     "lng" => $v2->x
                 ];
+
+                $keep_postal[$v2->postal][] = '';
             }
 
             $ary[] = [
@@ -3999,6 +4028,46 @@ GOLD
 
     }
 
+    /**
+     * 
+     */
+    public function getTempleNotReachTrain(){
+
+        $url = 'http://toyohide.work/BrainLog/api/templeNotReached';
+        $jsonStr = $this->_postJsonStr($url);
+        $notReachTrain = $jsonStr->data;
+
+        $stationAry = [];
+        $lineAry = [];
+
+        foreach($notReachTrain as $v){
+
+            $url2 = "https://express.heartrails.com/api/json?method=getStations&x={$v->lng}&y={$v->lat}";
+            $jsonStr2 = $this->_postJsonStr($url2);
+
+            foreach($jsonStr2->response->station as $v2){
+                $stationAry[$v2->name][] = '';
+                $lineAry[$v2->line][] = '';
+            }
+        }
+
+        $ary3 = [];
+        $ary4 = [];
+
+        foreach($stationAry as $k=>$v){
+//            $ary3[$k] = count($v);
+            $ary3[] = ['station'=>$k, 'count' => count($v)];
+        }
+
+        foreach($lineAry as $k=>$v){
+//            $ary4[$k] = count($v);
+            $ary4[] = ['line' => $k, 'count' => count($v)];
+        }
+
+        $response = ['not_reach_station_count'=>$ary3, 'not_reach_line_count'=>$ary4];
+        return response()->json(['data' => $response]);
+
+    }
 
     /**
      * @param Request $request
