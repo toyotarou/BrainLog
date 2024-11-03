@@ -4031,6 +4031,31 @@ GOLD
     /**
      * 
      */
+    public function tokyoJinjachouTempleList()
+    {
+
+        $result = DB::table('t_temple_list')->get();
+
+        $ary = [];
+        foreach($result as $v){
+            $ary[] = [
+                'city' => $v->city,
+                'url' => $v->url,
+                'name' => $v->name,
+                'address' => $v->address,
+                'lat' => $v->lat,
+                'lng' => $v->lng,
+            ];
+        }
+
+        $response = $ary;
+        return response()->json(['data' => $response]);
+
+    }
+
+    /**
+     * 
+     */
     public function getTempleNotReachTrain(){
 
         $url = 'http://toyohide.work/BrainLog/api/templeNotReached';
