@@ -5038,6 +5038,9 @@ item = '株式買付'
         $ary["msg"] = ($just_reverse == "just") ? $result->msg_just : $result->msg_reverse;
         $ary["msg2"] = ($just_reverse == "just") ? $result->msg_just2 : $result->msg_reverse2;
         $ary["msg3"] = ($just_reverse == "just") ? $result->msg_just3 : $result->msg_reverse3;
+        
+        $ary["feeling_just"] = $result->feeling_just;
+        $ary["feeling_reverse"] = $result->feeling_reverse;
 
         $response = $ary;
 
@@ -5335,7 +5338,7 @@ t_tarotdraw.year, t_tarotdraw.month, t_tarotdraw.day;
             $ary[$k]['drawNum_r'] = $ary6[$v->id][1];
 
             $ary[$k]["feel_j"] = $v->feeling_just;
-            $ary[$k]["feel_r"] = $v->feeling_reverse;            
+            $ary[$k]["feel_r"] = $v->feeling_reverse;
         }
 
         $response = $ary;

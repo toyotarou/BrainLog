@@ -194,6 +194,7 @@ Route::namespace('Api')->group(function () {
     Route::post('getAllTarot', 'ApiController@getAllTarot');
     Route::post('getCatTarot', 'ApiController@getCatTarot');
     Route::post('getCategoryRate', 'ApiControllerSecond@getCategoryRate');
+    Route::post('updateTarotFeeling', 'ApiControllerSecond@updateTarotFeeling');
 
     //dice
     Route::post('dice', 'ApiController@dice');
@@ -213,6 +214,7 @@ Route::namespace('Api')->group(function () {
     Route::post('getTempleListTemple', 'ApiControllerSecond@getTempleListTemple');
     Route::post('getTempleNotReachTrain', 'ApiControllerSecond@getTempleNotReachTrain');
     Route::post('tokyoJinjachouTempleList', 'ApiControllerSecond@tokyoJinjachouTempleList');
+    Route::post('getComplementTempleVisitedDate', 'ApiControllerSecond@getComplementTempleVisitedDate');
 
     //walk
     Route::post('getWalkRecord', 'ApiController@getWalkRecord');

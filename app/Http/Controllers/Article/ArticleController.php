@@ -35,13 +35,13 @@ class ArticleController extends Controller
     {
         $useDevice = ($this->Utility->wp_is_mobile() == false) ? "pc" : "mobile";
 
-        /////////////////////////////////
-        $file = public_path() . "/mySetting/weather.data";
-        $weatherFileUpdateDate = date("Y-m-d", filemtime($file));
-        if ($weatherFileUpdateDate != date("Y-m-d")) {
-            return redirect('/other/weather');
-        }
-        /////////////////////////////////
+        // /////////////////////////////////
+        // $file = public_path() . "/mySetting/weather.data";
+        // $weatherFileUpdateDate = date("Y-m-d", filemtime($file));
+        // if ($weatherFileUpdateDate != date("Y-m-d")) {
+        //     return redirect('/other/weather');
+        // }
+        // /////////////////////////////////
 
         //------------------//
         $holiday = [];
