@@ -77,60 +77,15 @@ class OtherController extends Controller
 
     public function weather()
     {
-        $open_url = "https://tenki.jp/week/3/15/";
-        $content = file_get_contents($open_url);
-        $ex_content = explode("\n", $content);
-
-        $a = [];
-        foreach ($ex_content as $k => $v) {
-            if (preg_match("/week-index-table/", trim($v))) {
-                $a[] = $k;
-            }
-        }
-
-        $AAA = "";
-        for ($i = $a[0]; $i < $a[1]; $i++) {
-            $AAA .= trim($ex_content[$i]);
-        }
-
-        $ex_AAA = explode("|", strtr($AAA, ['<tr' => '|<tr']));
 
         /////////////////////
-        $date = [];
-        $ex_AAA1 = explode("|", strtr($ex_AAA[1], ['><' => '>|<']));
-        foreach ($ex_AAA1 as $value) {
-            if (preg_match("/<th.+class=\"date\">(.+)<\/th>/", trim($value), $m)) {
-                $ex_m1 = explode("日", trim($m[1]));
-                $date[] = trim($ex_m1[0]);
-            }
-        }
-
-        $startDate = date("Y-m-") . $date[0];
-        $date[1] = $startDate;
-        for ($i = 2; $i < count($date); $i++) {
-            $date[$i] = date("Y-m-d", strtotime($startDate) + (86400 * ($i - 1)));
-        }
-        /////////////////////
-
-        /////////////////////
-        $weather = [];
-        $ex_AAA2 = explode("|", strtr($ex_AAA[2], ['><' => '>|<']));
-        $i = 1;
-        foreach ($ex_AAA2 as $value) {
-            if (preg_match("/<span class=\"forecast-telop\">(.+)<\/span>/", trim($value), $m)) {
-                $weather[$i] = trim($m[1]);
-                $i++;
-            }
-        }
-        /////////////////////
-
         $DDD = [];
-        $open_url = public_path() . "/mySetting/weather.data";
-        if (file_exists($open_url)) {
-            $content = file_get_contents($open_url);
-            $ex_content = explode("\n", $content);
+        $open_url2 = public_path() . "/mySetting/weather.data";
+        if (file_exists($open_url2)) {
+            $content2 = file_get_contents($open_url2);
+            $ex_content2 = explode("\n", $content2);
 
-            foreach ($ex_content as $v) {
+            foreach ($ex_content2 as $v) {
                 if (trim($v) == "") {
                     continue;
                 }
@@ -140,14 +95,82 @@ class OtherController extends Controller
                 $DDD[trim($ex_v[0])] = trim($ex_v[1]);
             }
         }
+        /////////////////////
+// echo "\n";echo "\n";
+// print_r($DDD);
 
-        for ($i = 1; $i < count($date); $i++) {
-            $DDD[$date[$i]] = $weather[$i];
+        $open_url = "https://weather.yahoo.co.jp/weather/jp/13/4410.html";
+
+        $content = file_get_contents($open_url);
+        $ex_content = explode("\n", $content);
+
+        $a = [];
+        foreach ($ex_content as $k => $v) {
+            if (preg_match("/yjw_week/", trim($v))) {
+                $a[] = $k;
+            }
         }
 
-        ksort($DDD);
+        $b = [];
+        foreach ($ex_content as $k => $v) {
+            if (preg_match("/ydnAd/", trim($v))) {
+                $b[] = $k;
+            }
+        }
 
-        $EEE = array();
+        $str = '';
+        for($i=$a[0]; $i<$b[0]; $i++){
+            $str .= trim($ex_content[$i]);
+        }
+
+        $ex_str = explode("|", strtr($str, ["<tr" => "|<tr"]));
+
+        $hiduke_line = '';
+        $tenki_line = '';
+        foreach($ex_str as $v){
+            if (preg_match("/<small>日付<\/small>/", trim($v))) {
+                if($hiduke_line == ''){
+                    $hiduke_line = $v;
+                }
+            }
+            if (preg_match("/<small>天気<\/small>/", trim($v))) {
+                if($tenki_line == ''){
+                    $tenki_line = $v;
+                }
+            }
+        }
+
+        $ex_hiduke_line = explode("|", strtr($hiduke_line, ["<td"=>"|<td"]));
+
+        $days = [];
+        foreach($ex_hiduke_line as $v){
+            if (preg_match("/(.+)月(.+)日/", trim(strip_tags($v)), $m)) {
+                $days[] =  date("Y") . "-" . sprintf("%02d", $m[1]). "-" . sprintf("%02d", $m[2]);
+            }
+        }
+// echo "\n";echo "\n";
+// print_r($days);
+
+        $ex_tenki_line = explode("|", strtr($tenki_line, ["<td"=>"|<td"]));
+
+        $tenkis = [];
+        foreach($ex_tenki_line as $v){
+            if (preg_match("/img/", trim($v))) {
+                if(preg_match("/<small>(.+)<\/small>/", trim($v), $m)){
+                    $tenkis[] = $m[1];
+                }
+            }
+        }
+// echo "\n";echo "\n";
+// print_r($tenkis);
+
+        for($i=0; $i<count($days); $i++){
+            $DDD[$days[$i]] = $tenkis[$i];
+        }
+// echo "\n";echo "\n";
+// print_r($DDD);
+
+        $EEE = [];
         foreach ($DDD as $k => $v) {
             if (trim($v) == "") {
                 continue;
@@ -155,11 +178,14 @@ class OtherController extends Controller
             $EEE[] = $k . "|" . $v;
         }
 
-        file_put_contents($open_url, implode("\n", $EEE));
+// echo "\n";echo "\n";
+// print_r($EEE);
+
+        file_put_contents($open_url2, implode("\n", $EEE));
 
         @chmod($open_url, 0777);
 
-        return redirect('/article/index');
+       return redirect('/article/index');
     }
 
     public function tag()
